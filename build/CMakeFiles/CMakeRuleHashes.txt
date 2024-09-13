@@ -1,0 +1,4 @@
+# Hashes of file build rules.
+4e16f4c2568c20697116e00cebdd2a69 external/glfw/CMakeFiles/uninstall
+908175c7de8039d27e03d14e12946db4 external/glfw/src/CMakeFiles/update_mappings
+10998a3eeceec0d41aad1c229d87611e gladsources/glad/include/KHR/khrplatform.h

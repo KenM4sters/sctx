@@ -1,0 +1,1 @@
+--out-path /Users/samuelbrookman/Desktop/projects/sandbox/build/gladsources/glad --api gl:core=3.3 --reproducible c --mx
