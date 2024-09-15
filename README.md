@@ -10,22 +10,22 @@
 - Framebuffers
 
 
-
-
 ## Desired Example Code
 
 ```
 
-auto texture = sctx::TextureBuilder::new()
-    .from_url("x.png")
-    .mipmaps(5)
-    .build();
-
-auto model = sctx::ModelBuilder::new()
-    .from_gltf("x.gltf)
-    .build();
 
 
+while(window.is_running()) {
+    sctx::begin_drawing(render_target, sctx::CLEAR_COLOR | sctx::CLEAR_DEPTH);
+
+    sctx::draw(mesh);
+
+    sctx::being_drawing(0, sctx::CLEAR_COLOR | sctx::CLEAR_DEPTH);
+
+    sctx::draw()
+
+}
 
 
 ```

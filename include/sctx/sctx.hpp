@@ -5,7 +5,6 @@
 
 #include <iostream>
 
-
 #define MT_HANDLE(Type) typedef std::shared_ptr<Type> Type##Handle;                                                      
      
 namespace mt 
@@ -78,7 +77,7 @@ enum class SamplerFilterMode
 /**
  * @brief
  */
-enum class TargetType 
+enum class TargetDimension 
 {
     Texture2D,
     TextureCube
@@ -88,7 +87,7 @@ enum class TargetType
 /**
  * @brief 
  */
-enum class InternalFormat 
+enum class ArrayInternalFormat 
 {
     R32,
     R32F,
@@ -116,7 +115,7 @@ enum class Format
 
 /**
  * @brief Specifies the different types of frame buffer attachments.
- * @note Color0 represents the 1st color attachment.
+ * @note Color0 represents the 1st color attachment - limited to 4 for now.
  */
 enum class Attachment 
 {
@@ -183,54 +182,6 @@ enum class ResourceType
 };
 
 
-//============================================================================
-// Flags to explicity pass single bits of information which change the
-// context's behaviour.
-//============================================================================
-
-
-/**
- * @brief
- */
-enum class TextureFlags
-{
-    ReadOnly = 0,
-    WriteOnly = 1 << 0,
-    ReadWrite = 1 << 1,
-    Color = 1 << 3,
-    Depth = 1 << 4,
-    Stencil = 1 << 5,
-};
-
-
-/**
- * @brief 
- */
-enum class VertexBufferFlags 
-{
-    Static = 0,
-    Dynamic = 1 << 0
-};
-
-
-/**
- * @brief
- */
-enum class IndexBufferFlags 
-{
-    Static = 0,
-    Dynamic = 1 << 0
-};
-
-
-/**
- * @brief
- */
-enum class UniformBufferFlags 
-{
-    Static = 0,
-    Dynamic = 1 << 0
-};
 
 
 
@@ -354,7 +305,7 @@ public:
     VertexBuffer(const VertexBuffer& other) = delete;
     VertexBuffer& operator=(const VertexBuffer& other) = delete;
 
-    virtual void create(Memory memory, uint32_t flags) = 0;
+    virtual void create(Memory memory) = 0;
 
     virtual void update(Memory memory, size_t byteOffset) = 0;
 
@@ -378,7 +329,7 @@ public:
     IndexBuffer(const IndexBuffer& other) = delete;
     IndexBuffer& operator=(const IndexBuffer& other) = delete;
 
-    virtual void create(Memory memory, uint32_t flags) = 0;
+    virtual void create(Memory memory) = 0;
 
     virtual void update(Memory memory, size_t byteOffset) = 0;
 
@@ -404,7 +355,7 @@ public:
     UniformBuffer(UniformBuffer&& other) = default;
     UniformBuffer& operator=(UniformBuffer&& other) = default;
 
-    virtual void create(Memory memory, uint32_t flags) = 0;
+    virtual void create(Memory memory) = 0;
 
     virtual void update(Memory memory, size_t byteOffset) = 0;
 
@@ -429,7 +380,7 @@ public:
     Program(const Program& other) = delete;
     Program& operator=(const Program& other) = delete;
 
-    virtual void create(const char* vertPath, const char* fragPath) = 0;
+    virtual void load(const char* vertPath, const char* fragPath) = 0;
 
     virtual void destroy() = 0;
 
@@ -453,9 +404,9 @@ public:
     Texture& operator=(const Texture& other) = delete;
 
 	virtual void create(
-        TargetType target,
+        TargetDimension target,
         uint32_t level,
-        InternalFormat internalFormat,
+        ArrayInternalFormat ArrayInternalFormat,
         uint32_t width, 
         uint32_t height, 
         Format format,
@@ -488,19 +439,19 @@ public:
     Sampler& operator=(const Sampler& other) = delete;
 
     virtual void create(
-        SamplerAddressMode addressModeS,
-        SamplerAddressMode addressModeT,
-        SamplerAddressMode addressModeR,
-        SamplerFilterMode minFilter,
-        SamplerFilterMode magFilter
+        GLenum addressModeS,
+        GLenum addressModeT,
+        GLenum addressModeR,
+        GLenum minFilter,
+        GLenum magFilter
     ) = 0;
 
     virtual void update(
-        SamplerAddressMode addressModeS,
-        SamplerAddressMode addressModeT,
-        SamplerAddressMode addressModeR,
-        SamplerFilterMode minFilter,
-        SamplerFilterMode magFilter
+        GLenum addressModeS,
+        GLenum addressModeT,
+        GLenum addressModeR,
+        GLenum minFilter,
+        GLenum magFilter
     ) = 0;
 
     virtual void detroy() = 0;
@@ -717,20 +668,20 @@ void shutdown();
  * of different contexts (attachments for FrameBuffers or as texture data for meshes).
  * @param target texture target type (probably Texture2D).
  * @param level mip-map level for this texture (probably 0).
- * @param internalFormat number of channels for the texture data as well as the type (probably RGBA32F).
+ * @param ArrayInternalFormat number of channels for the texture data as well as the type (probably RGBA32F).
  * @param width width of the texture in pixels.
  * @param height height of the texture in pixels.
- * @param format similar to internalFormat, but only needs the number of channels (probably RGBA).
- * @param type the type specified for the internalFormat (probably Float).
+ * @param format similar to ArrayInternalFormat, but only needs the number of channels (probably RGBA).
+ * @param type the type specified for the ArrayInternalFormat (probably Float).
  * @param nMipMaps the number of mip-maps that should be generated. If 0, then no mip-maps are generated.
  * @param sampler the sampler that will be used with this texture (defines how it should be sampled).
  * @return A smart pointer to the base Texture class which abstracts context-related
  * operations and offers a minimal interface for the user.
  */
 [[nodiscard]] TextureHandle createTexture(
-    TargetType              target,  
+    TargetDimension              target,  
     uint32_t                level, 
-    InternalFormat          internalFormat,  
+    ArrayInternalFormat          ArrayInternalFormat,  
     uint32_t                width,     
     uint32_t                height,    
     Format                  format,  
