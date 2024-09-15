@@ -1,7 +1,7 @@
 #ifndef MT_WINDOW_HPP
 #define MT_WINDOW_HPP
 
-#include <sandbox/sandbox.hpp>
+#include <sctx/sctx.hpp>
 #include <GLFW/glfw3.h>
 
 #include <iostream>
